@@ -1,6 +1,14 @@
 <script setup lang="ts">
+    import { usePokemonStore } from '../stores/PokemonStore';
+    
     // Importa todas las imágenes SVG en un objeto
     const images = import.meta.glob('../assets/types/*.svg', { eager: true }) as Record<string, { default: string }>;
+
+    const store = usePokemonStore();
+
+    function filtrarType(type: string) {
+      store.filterByType = type;
+    }
 
     const arrayOfTypes: Array<{id: string, name: string, img: string}> = [
         {id: '1', name: 'Bug', img : images["../assets/types/bug.svg"].default},
@@ -21,8 +29,9 @@
     ];
 </script>
 <template>
-    <div v-for="type in arrayOfTypes" class="cardFilter">
-        <img :src="type.img" :alt="type.name" style="width: 1.3em; height: 1.3em; padding-left: 12px; padding-top: 8px;">
+    <button @click="store.filterByType = ''">Limpiar Filtro</button>
+    <div v-for="type in arrayOfTypes" class="cardFilter" @click="filtrarType(type.name)">
+        <img :src="type.img" :alt="type.name"  style="width: 1.3em; height: 1.3em; padding-left: 12px; padding-top: 8px;">
         <span>Type {{ type.name }}</span>
     </div>
 </template>

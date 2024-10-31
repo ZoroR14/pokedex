@@ -5,7 +5,8 @@ export const usePokemonStore = defineStore('pokemonStore', {
     state: () => ({
         pokemons: [] as Pokemons[],
         url: 'https://pokeapi.co/api/v2' as string,
-        filterPokemonName: "" as string
+        filterPokemonName: "" as string,
+        filterByType: "" as string
     }),
     actions: {
         async  getPokemons(){
@@ -53,10 +54,19 @@ export const usePokemonStore = defineStore('pokemonStore', {
     },
     getters: {
         filteredPokemons(state){
-            if(!state.filterPokemonName) return state.pokemons
-            return state.pokemons.filter((pokemon) => {
+            if(!state.filterPokemonName && !state.filterByType) return state.pokemons
+            else if(state.filterPokemonName){
+              return state.pokemons.filter((pokemon) => {
                 return pokemon.name.toLowerCase().includes(state.filterPokemonName.toLowerCase())
-            })
-        }
+              })
+            }
+            else{
+              return state.pokemons.filter((pokemon) => {
+                return pokemon.pokemonDetails.pokemonTypes.some((type) => {
+                  return type.type.name.toLowerCase().includes(state.filterByType.toLocaleLowerCase())
+                })
+              })
+            }
+        },
     }
 })
