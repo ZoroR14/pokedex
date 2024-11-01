@@ -67,6 +67,10 @@ function manejarActivo(){
                 <section>
                     <span># {{ store.pokemon.id }}</span>
                     <span>{{ store.pokemon.name }}</span>
+                    <div v-for="t in store.pokemon.pokemonDetails.pokemonTypes" class="typeCard darker">
+                            <img :src="getImageRoute(t.type.name)" style="width: 1.3em; height: 1.3em;" :alt="t.type.name">
+                            <span>{{ t.type.name }}</span>
+                    </div>
                 </section>
             </div>
             <div style="height: 60%; display: inline-flexbox;">
@@ -78,12 +82,12 @@ function manejarActivo(){
                 </div>
                 <div v-show="isActiveGeneral">
                     <p>
-                        Nombre: {{ store.pokemon.name }}
-                        Peso: {{ store.pokemon.pokemonDetails.weight }} kg
-                        Altura: {{ store.pokemon.pokemonDetails.height }} "
-                        Experiencia Base: {{ store.pokemon.pokemonDetails.base_experience }} pts
-                        Felicidad Base: {{ store.pokemon.pokemonDetails.base_happiness }}
-                        Indice de Captura: {{ store.pokemon.pokemonDetails.capture_rate }}
+                        Nombre: {{ store.pokemon.name.charAt(0).toUpperCase() + store.pokemon.name.slice(1) }} <br>
+                        Peso: {{ store.pokemon.pokemonDetails.weight }} kg <br>
+                        Altura: {{ store.pokemon.pokemonDetails.height }} " <br>
+                        Experiencia Base: {{ store.pokemon.pokemonDetails.base_experience }} pts <br>
+                        Felicidad Base: {{ store.pokemon.pokemonDetails.base_happiness }} <br>
+                        Indice de Captura: {{ store.pokemon.pokemonDetails.capture_rate }} <br>
                         Grito
                     </p>
                 </div>
