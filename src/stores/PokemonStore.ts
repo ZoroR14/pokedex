@@ -8,7 +8,9 @@ export const usePokemonStore = defineStore('pokemonStore', {
         filterPokemonName: "" as string,
         filterByType: "" as string,
         page: 1 as number,
-        showPagination: true as boolean
+        showPagination: true as boolean,
+        mostrarModal: false as boolean,
+        pokemon: {} as Pokemons
     }),
     actions: {
         async  getPokemons(){
@@ -50,9 +52,8 @@ export const usePokemonStore = defineStore('pokemonStore', {
                 cachedResponse = await cacheStorage.match(url)
                 return await cachedResponse!.json()
             }
-          
             return await cachedResponse.json();
-          },
+          }
     },
     getters: {
         filteredPokemons(state){

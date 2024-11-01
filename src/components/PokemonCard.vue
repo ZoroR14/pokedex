@@ -1,21 +1,47 @@
 <script setup lang="ts">
-
+import { ref } from 'vue';
 import { usePokemonStore } from '../stores/PokemonStore';
+import { Pokemons } from '../types';
+import PokemonModal from './PokemonModal.vue';
+    
 const images = import.meta.glob('../assets/types/*.svg', { eager: true }) as Record<string, { default: string }>;
 
-
 const store = usePokemonStore()
+const isModalVisible = ref(false);
+const isActiveGeneral = ref(true);
+const isActiveEstadisticas = ref(false);
+
 
 function getImageRoute(type: string){
     let ruta = (type == 'steel' || type == 'fairy') ? "../assets/types/normal.svg" : "../assets/types/" + type + ".svg";
     return images[ruta].default
 }
 
+function showModal(pokemon: Pokemons) {
+  isModalVisible.value = true;
+  store.pokemon = pokemon;
+}
+
+function hideModal() {
+  isModalVisible.value = false;
+}
+
+function manejarActivo(){
+    if(isActiveGeneral.value){
+        isActiveEstadisticas.value = true;
+        isActiveGeneral.value = false;
+    }
+    else if(isActiveEstadisticas.value){
+        isActiveGeneral.value = true;
+        isActiveEstadisticas.value = false;
+    }
+}
+
 </script>
 <template>
     <div style="margin-left: 2%;">
-        <div v-for="pokemon in store.filteredPokemons" class="pokemonCard" :style="{'--main-color': pokemon.pokemonDetails.pokemonColor,  color: pokemon.pokemonDetails.pokemonColor != 'white' ? 'white': 'black'}">
-            <div class="pokemonDetails" style="">
+        <div v-for="pokemon in store.filteredPokemons" :key="pokemon.id" @click="showModal(pokemon)" class="pokemonCard" :style="{'--main-color': pokemon.pokemonDetails.pokemonColor,  color: pokemon.pokemonDetails.pokemonColor != 'white' ? 'white': 'black'}">
+            <div class="pokemonDetails">
                 <section class="pokemonData">
                     <span># {{ pokemon.id }}</span>
                     <span>{{ pokemon.name }}</span>
@@ -32,6 +58,41 @@ function getImageRoute(type: string){
             </div>
         </div>
     </div>
+    <PokemonModal :isVisible="isModalVisible" @close="hideModal">
+        <div style="height: 500px; width: 250px;">
+            <div :style="{height: '40%', backgroundColor: store.pokemon.pokemonDetails.pokemonColor, display: 'flex'}">
+                <section>
+                    <img :src="store.pokemon.pokemonDetails.pokemonImage" :alt="store.pokemon.name">
+                </section>
+                <section>
+                    <span># {{ store.pokemon.id }}</span>
+                    <span>{{ store.pokemon.name }}</span>
+                </section>
+            </div>
+            <div style="height: 60%; display: inline-flexbox;">
+                <div :style="{backgroundColor: isActiveGeneral ? 'lightblue' : 'transparent', width: '50%'}" @click="manejarActivo">
+                    <span>Datos Generales</span>
+                </div>
+                <div :style="{backgroundColor: isActiveEstadisticas ? 'lightblue' : 'transparent', width: '50%'}" @click="manejarActivo">
+                    <span>Estadisticas Base</span>
+                </div>
+                <div v-show="isActiveGeneral">
+                    <p>
+                        Nombre: {{ store.pokemon.name }}
+                        Peso: {{ store.pokemon.pokemonDetails.weight }} kg
+                        Altura: {{ store.pokemon.pokemonDetails.height }} "
+                        Experiencia Base: {{ store.pokemon.pokemonDetails.base_experience }} pts
+                        Felicidad Base: {{ store.pokemon.pokemonDetails.base_happiness }}
+                        Indice de Captura: {{ store.pokemon.pokemonDetails.capture_rate }}
+                        Grito
+                    </p>
+                </div>
+                <div v-show="isActiveEstadisticas">
+                    {{ store.pokemon.pokemonDetails.stats }}
+                </div>
+            </div>
+        </div>
+    </PokemonModal>
 </template>
 <style lang="scss">
 
