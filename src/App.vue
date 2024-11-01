@@ -2,6 +2,8 @@
 import SearchInput from './components/SearchInput.vue';
 import CardFilter from './components/CardFilter.vue';
 import PokemonCard from './components/PokemonCard.vue';
+import Pagination from './components/Pagination.vue'
+
 import { usePokemonStore } from './stores/PokemonStore'
 
 import { onMounted } from 'vue';
@@ -25,6 +27,7 @@ onMounted(() => {
     </div>
     <CardFilter/>
     <PokemonCard/>
+    <Pagination v-show="store.showPagination"/>
   </header>
 </template>
 

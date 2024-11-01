@@ -6,7 +6,9 @@ export const usePokemonStore = defineStore('pokemonStore', {
         pokemons: [] as Pokemons[],
         url: 'https://pokeapi.co/api/v2' as string,
         filterPokemonName: "" as string,
-        filterByType: "" as string
+        filterByType: "" as string,
+        page: 1 as number,
+        showPagination: true as boolean
     }),
     actions: {
         async  getPokemons(){
@@ -50,17 +52,25 @@ export const usePokemonStore = defineStore('pokemonStore', {
             }
           
             return await cachedResponse.json();
-          }
+          },
     },
     getters: {
         filteredPokemons(state){
-            if(!state.filterPokemonName && !state.filterByType) return state.pokemons
+            if(!state.filterPokemonName && !state.filterByType){
+              state.showPagination = true;
+              const perPage:number = 10;
+              const from = (state.page * perPage) - perPage;
+              const to = (state.page * perPage);
+              return state.pokemons.slice(from, to);
+            } 
             else if(state.filterPokemonName){
+              state.showPagination = false;
               return state.pokemons.filter((pokemon) => {
                 return pokemon.name.toLowerCase().includes(state.filterPokemonName.toLowerCase())
               })
             }
             else{
+              state.showPagination = false;
               return state.pokemons.filter((pokemon) => {
                 return pokemon.pokemonDetails.pokemonTypes.some((type) => {
                   return type.type.name.toLowerCase().includes(state.filterByType.toLocaleLowerCase())
@@ -68,5 +78,5 @@ export const usePokemonStore = defineStore('pokemonStore', {
               })
             }
         },
-    }
+    },
 })
