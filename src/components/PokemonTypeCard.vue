@@ -9,12 +9,16 @@ function getImageRoute(type: string){
     return images[ruta].default
 }
 
+function formeatTexto (texto: string){
+    return texto.charAt(0).toUpperCase() + texto.slice(1)
+}
+
 </script>
 <template>
     <div style="display: inline-flex;">
         <div v-for="t in props.pokemon.pokemonDetails.pokemonTypes" class="typeCard darker" :style="{'--main-color': props.pokemon.pokemonDetails.pokemonColor}">
             <img :src="getImageRoute(t.type.name)" style="width: 1.3em; height: 1.3em;" :alt="t.type.name">
-            <span>{{ t.type.name }}</span>
+            <span>{{ formeatTexto(t.type.name) }}</span>
         </div>
     </div>
 </template>
@@ -26,7 +30,7 @@ function getImageRoute(type: string){
     margin: 16px 2px; 
     padding-left: 10px;
     padding-right: 19px;
-    padding-top: 2px;
+    padding-top: 5px;
     color: white;
     border-radius: 5px;
     font-size: small;

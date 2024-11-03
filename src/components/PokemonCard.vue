@@ -33,44 +33,54 @@ function manejarActivo(){
     }
 }
 
+function formeatTexto (texto: string){
+    return texto.charAt(0).toUpperCase() + texto.slice(1)
+}
+
+function formatearPokemonNumber(numero: number){
+    return numero.toString().padStart(3, '00')
+}
+
 </script>
 <template>
     <div style="margin-left: 2%;">
         <div v-for="pokemon in store.filteredPokemons" :key="pokemon.id" @click="showModal(pokemon)" class="pokemonCard" :style="{'--main-color': pokemon.pokemonDetails.pokemonColor,  color: pokemon.pokemonDetails.pokemonColor != 'white' ? 'white': 'black'}">
             <section class="pokemonDetails">
                 <article class="pokemonData">
-                    <div style="color: #000;"># {{ pokemon.id }}</div>
-                    <div style="font-size: 2em;">{{ pokemon.name }}</div>
+                    <div style="color: #000;"># {{ formatearPokemonNumber(pokemon.id) }}</div>
+                    <div style="font-size: 2em;">{{ formeatTexto(pokemon.name) }}</div>
                     <PokemonTypeCard :pokemon="pokemon"></PokemonTypeCard>
                 </article>
                 <article class="pokemonImage">
-                    <img :src="pokemon.pokemonDetails.pokemonImage" :alt="pokemon.name" style="width: 280px; height: 280px;">
+                    <img :src="pokemon.pokemonDetails.pokemonImage" :alt="pokemon.name" style="width: 280px; height: 280px; object-fit: contain;">
                 </article>
             </section>
         </div>
     </div>
     <PokemonModal :isVisible="isModalVisible" @close="hideModal">
-        <div style="height: 550px; width: 100%;">
-            <div :style="{height: '40%', backgroundColor: store.pokemon.pokemonDetails.pokemonColor, display: 'flex'}">
-                <section>
-                    <img :src="store.pokemon.pokemonDetails.pokemonImage" :alt="store.pokemon.name">
-                </section>
-                <section>
-                    <div># {{ store.pokemon.id }}</div>
-                    <div>{{ store.pokemon.name }}</div>
+        <div style="height: 550px;">
+            <div :style="{height: '40%', backgroundColor: store.pokemon.pokemonDetails.pokemonColor, display: 'flex', flexDirection: 'row'}">
+                <article style="position: relative; bottom: 45px; right: 54px; width: 40%;">
+                    <img :src="store.pokemon.pokemonDetails.pokemonImage" :alt="store.pokemon.name" style="width: 280px; height: 280px;">
+                </article>
+                <article style="display: flex; flex-direction: column; width: 60%; margin-top: 40px;">
+                    <div># {{ formatearPokemonNumber(store.pokemon.id) }}</div>
+                    <div style="color: white; font-size: 2em; font-weight: bold;">{{ formeatTexto(store.pokemon.name) }}</div>
                     <PokemonTypeCard :pokemon="store.pokemon"></PokemonTypeCard>
-                </section>
+                </article>
             </div>
-            <div style="height: 60%; display: inline-flexbox;">
-                <div :style="{backgroundColor: isActiveGeneral ? 'lightblue' : 'transparent', width: '50%'}" @click="manejarActivo">
-                    <span>Datos Generales</span>
-                </div>
-                <div :style="{backgroundColor: isActiveEstadisticas ? 'lightblue' : 'transparent', width: '50%'}" @click="manejarActivo">
-                    <span>Estadisticas Base</span>
+            <div style="height: 60%; display: inline-flexbox; margin-top: 10px;">
+                <div style="display: flex; flex-direction: row;">
+                    <div :style="{backgroundColor: isActiveGeneral ? 'lightblue' : 'transparent', width: '50%', border: '1px solid lightblue', textAlign: 'center'}" @click="manejarActivo">
+                        <h5>Datos Generales</h5>
+                    </div>
+                    <div :style="{backgroundColor: isActiveEstadisticas ? 'lightblue' : 'transparent', width: '50%', border: '1px solid lightblue', textAlign: 'center'}" @click="manejarActivo">
+                        <h5>Estadisticas Base</h5>
+                    </div>
                 </div>
                 <div v-show="isActiveGeneral">
                     <p>
-                        Nombre: {{ store.pokemon.name.charAt(0).toUpperCase() + store.pokemon.name.slice(1) }} <br>
+                        Nombre: {{ formeatTexto(store.pokemon.name) }} <br>
                         Peso: {{ store.pokemon.pokemonDetails.weight }} kg <br>
                         Altura: {{ store.pokemon.pokemonDetails.height }} " <br>
                         Experiencia Base: {{ store.pokemon.pokemonDetails.base_experience }} pts <br>
@@ -80,9 +90,9 @@ function manejarActivo(){
                     </p>
                 </div>
                 <div v-show="isActiveEstadisticas">
-                    <section style="margin-top: 10px;">
+                    <section style="margin-top: 10px; font-size: small;">
                         <div v-for="stats in store.pokemon.pokemonDetails.stats" :key="stats.stat.name">
-                            <label>{{ stats.stat.name }}</label>
+                            <label>{{ formeatTexto(stats.stat.name) }}</label>
                             <progress :value="stats.base_stat" max="250"></progress>
                         </div>
                     </section>
@@ -115,13 +125,16 @@ function manejarActivo(){
 
 .pokemonData {
   width: 40%;
+  height: max-content;
 }
 
 .pokemonImage {
   width: 60%;
+  height: max-content;
   position: relative;
   bottom: 125px;
   right: 10px;
+  overflow: hidden;
 } 
 
 progress{
@@ -136,6 +149,7 @@ progress{
 progress[value]::-webkit-progress-bar{
     width: 100%;
     height: 20px;
+    border-radius: 50px;
     background-color: #eee;
     transition: width 300ms ease;
 }
