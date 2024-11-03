@@ -20,6 +20,8 @@ function getImageRoute(type: string){
 function showModal(pokemon: Pokemons) {
   isModalVisible.value = true;
   store.pokemon = pokemon;
+  isActiveGeneral.value = true;
+  isActiveEstadisticas.value = false;
 }
 
 function hideModal() {
@@ -59,7 +61,7 @@ function manejarActivo(){
         </div>
     </div>
     <PokemonModal :isVisible="isModalVisible" @close="hideModal">
-        <div style="height: 500px; width: 250px;">
+        <div style="height: 550px; width: 100%;">
             <div :style="{height: '40%', backgroundColor: store.pokemon.pokemonDetails.pokemonColor, display: 'flex'}">
                 <section>
                     <img :src="store.pokemon.pokemonDetails.pokemonImage" :alt="store.pokemon.name">
@@ -92,13 +94,18 @@ function manejarActivo(){
                     </p>
                 </div>
                 <div v-show="isActiveEstadisticas">
-                    {{ store.pokemon.pokemonDetails.stats }}
+                    <section style="margin-top: 10px;">
+                        <div v-for="stats in store.pokemon.pokemonDetails.stats" :key="stats.stat.name">
+                            <label>{{ stats.stat.name }}</label>
+                            <progress :value="stats.base_stat" max="250"></progress>
+                        </div>
+                    </section>
                 </div>
             </div>
         </div>
     </PokemonModal>
 </template>
-<style lang="scss">
+<style lang="scss" scoped>
 
 .pokemonCard{
   display: inline-grid;
@@ -136,5 +143,28 @@ function manejarActivo(){
 .darker{
     background-color: var(--main-color);
     filter: brightness(0.8);
+}
+
+progress{
+    width: 100%;
+    height: 20px;
+    border-radius: 50px;
+    background-color: #ddd;
+    transition: width 300ms ease;
+    margin: 3px 3px;
+}
+
+progress[value]::-webkit-progress-bar{
+    width: 100%;
+    height: 20px;
+    background-color: #eee;
+    transition: width 300ms ease;
+}
+
+progress[value]::-webkit-progress-value{
+    width: 0;
+    border-radius: 50px;
+    background-color: lightblue;
+    transition: width 300ms ease;
 }
 </style>
