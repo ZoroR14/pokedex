@@ -30,7 +30,7 @@
 </script>
 <template>
     <button @click="store.filterByType = ''">Limpiar Filtro</button>
-    <div v-for="type in arrayOfTypes" class="cardFilter" @click="filtrarType(type.name)">
+    <div v-for="type in arrayOfTypes" class="cardFilter" @click="filtrarType(type.name)" style="margin-bottom: 20px;">
         <img :src="type.img" :alt="type.name"  style="width: 1.3em; height: 1.3em; padding-left: 12px; padding-top: 8px;">
         <span>Type {{ type.name }}</span>
     </div>

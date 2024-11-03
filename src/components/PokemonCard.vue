@@ -3,23 +3,17 @@ import { ref } from 'vue';
 import { usePokemonStore } from '../stores/PokemonStore';
 import { Pokemons } from '../types';
 import PokemonModal from './PokemonModal.vue';
+import PokemonTypeCard  from './PokemonTypeCard.vue'
     
-const images = import.meta.glob('../assets/types/*.svg', { eager: true }) as Record<string, { default: string }>;
 
 const store = usePokemonStore()
 const isModalVisible = ref(false);
 const isActiveGeneral = ref(true);
 const isActiveEstadisticas = ref(false);
 
-
-function getImageRoute(type: string){
-    let ruta = (type == 'steel' || type == 'fairy') ? "../assets/types/normal.svg" : "../assets/types/" + type + ".svg";
-    return images[ruta].default
-}
-
 function showModal(pokemon: Pokemons) {
-  isModalVisible.value = true;
   store.pokemon = pokemon;
+  isModalVisible.value = true;
   isActiveGeneral.value = true;
   isActiveEstadisticas.value = false;
 }
@@ -43,21 +37,16 @@ function manejarActivo(){
 <template>
     <div style="margin-left: 2%;">
         <div v-for="pokemon in store.filteredPokemons" :key="pokemon.id" @click="showModal(pokemon)" class="pokemonCard" :style="{'--main-color': pokemon.pokemonDetails.pokemonColor,  color: pokemon.pokemonDetails.pokemonColor != 'white' ? 'white': 'black'}">
-            <div class="pokemonDetails">
-                <section class="pokemonData">
-                    <span># {{ pokemon.id }}</span>
-                    <span>{{ pokemon.name }}</span>
-                    <div style="display: inline-flex;">
-                        <div v-for="t in pokemon.pokemonDetails.pokemonTypes" class="typeCard darker">
-                            <img :src="getImageRoute(t.type.name)" style="width: 1.3em; height: 1.3em;" :alt="t.type.name">
-                            <span>{{ t.type.name }}</span>
-                        </div>
-                    </div>
-                </section>
-                <section class="pokemonImage">
-                    <img :src="pokemon.pokemonDetails.pokemonImage" :alt="pokemon.name" style="width: 12em; height: 12em;">
-                </section>
-            </div>
+            <section class="pokemonDetails">
+                <article class="pokemonData">
+                    <div style="color: #000;"># {{ pokemon.id }}</div>
+                    <div style="font-size: 2em;">{{ pokemon.name }}</div>
+                    <PokemonTypeCard :pokemon="pokemon"></PokemonTypeCard>
+                </article>
+                <article class="pokemonImage">
+                    <img :src="pokemon.pokemonDetails.pokemonImage" :alt="pokemon.name" style="width: 280px; height: 280px;">
+                </article>
+            </section>
         </div>
     </div>
     <PokemonModal :isVisible="isModalVisible" @close="hideModal">
@@ -67,12 +56,9 @@ function manejarActivo(){
                     <img :src="store.pokemon.pokemonDetails.pokemonImage" :alt="store.pokemon.name">
                 </section>
                 <section>
-                    <span># {{ store.pokemon.id }}</span>
-                    <span>{{ store.pokemon.name }}</span>
-                    <div v-for="t in store.pokemon.pokemonDetails.pokemonTypes" class="typeCard darker">
-                            <img :src="getImageRoute(t.type.name)" style="width: 1.3em; height: 1.3em;" :alt="t.type.name">
-                            <span>{{ t.type.name }}</span>
-                    </div>
+                    <div># {{ store.pokemon.id }}</div>
+                    <div>{{ store.pokemon.name }}</div>
+                    <PokemonTypeCard :pokemon="store.pokemon"></PokemonTypeCard>
                 </section>
             </div>
             <div style="height: 60%; display: inline-flexbox;">
@@ -111,7 +97,7 @@ function manejarActivo(){
   display: inline-grid;
   width: 24em;
   height: 8em;
-  margin: 10px 5px;
+  margin: 20px 6px;
   border-radius: 10px;
   font-weight: bold;
   box-shadow: 1px 1px 1px black;
@@ -122,6 +108,9 @@ function manejarActivo(){
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  margin: 10px 10px;
+  height: 100%;
+  width: 100%;
 }
 
 .pokemonData {
@@ -130,20 +119,10 @@ function manejarActivo(){
 
 .pokemonImage {
   width: 60%;
+  position: relative;
+  bottom: 125px;
+  right: 10px;
 } 
-
-.typeCard{
-    width: 4em; 
-    height: 3em; 
-    margin: 5px 5px; 
-    color: white;
-    border-radius: 5px;
-}
-
-.darker{
-    background-color: var(--main-color);
-    filter: brightness(0.8);
-}
 
 progress{
     width: 100%;
